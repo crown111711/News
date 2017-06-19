@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" 
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:tx="http://www.springframework.org/schema/tx" 
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 	
+	http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+	http://www.springframework.org/schema/aop 
+	http://www.springframework.org/schema/aop/spring-aop-3.1.xsd  
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-3.1.xsd">
+    
+   <!--  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+            <property name="driverClasName" value="com.jdbc.mysql.Driver"></property>
+            <property name="url" value="jdbc:mysql://localhost:3306/news"></property>
+            <property name="username" value="root"></property>
+            <property name="password" value="root"></property>     
+    </bean>
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+           <property name="dataSource" ref="dataSource"></property>
+           <property name="hibernateProperties">
+               <props>
+                    <prop key="dialect">
+                       org.hibernate.dialect.MySQLDialect
+                    </prop>
+               </props>          
+           </property>
+          <property name="mappingResources">
+                    <list>
+                         <value>com/news/entity/Admin.hbm.xml</value>
+                         <value>com/news/entity/Newsinfo.hbm.xml</value>
+                         <value>com/news/entity/Topic.hbm.xml</value>
+                    </list>
+          </property> 
+    </bean>
+    
+    <bean id="transactionManager" class="org.springframework.hibernate4.HibernateTransactionManager">
+                  <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+    
+    
+    <tx:advice id="txAdvice" transaction-manager="transactionManager">
+             <tx:attributes>
+                  <tx:method name="*" propagation="REQUIRED"/>
+             </tx:attributes>
+    </tx:advice> 
+    
+    <aop:config>
+           <aop:pointcut expression="execution(* com.news.biz.*.*(..))" id="bizMethods"/>
+           <aop:advisor advice-ref="txAdvice" pointcut-ref="bizMethods"/>
+    </aop:config> -->
+    
+    
+	<bean id="dataSource"
+		class="org.apache.commons.dbcp.BasicDataSource">
+		<property name="driverClassName"
+			value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/news"></property>
+		<property name="username" value="root"></property>
+		<property name="password" value="root"></property>
+	</bean>
+	<bean id="sessionFactory"
+		class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+		<property name="dataSource">
+			<ref bean="dataSource" />
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">
+					org.hibernate.dialect.MySQLDialect
+				</prop>
+			</props>
+		</property>
+		<property name="mappingResources">
+			<list>
+
+			<value>com/news/entity/Admin.hbm.xml</value>
+			<value>com/news/entity/Topic.hbm.xml</value>
+			<value>com/news/entity/Newsinfo.hbm.xml</value></list>
+		</property>
+	</bean>
+	
+	<!--  定义事务通知    --> 
+	
+   <bean id="transactionManager"
+		class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+		<property name="sessionFactory" ref="sessionFactory" />
+	</bean>
+	
+	<tx:advice id="txAdvice" transaction-manager="transactionManager">	 
+	  <tx:attributes>	 
+	  	<tx:method name="*" propagation="REQUIRED" /> 
+	  </tx:attributes>
+	</tx:advice>
+	
+    <!--定义切面，并将事务通知和切面组合（定义哪些方法应用事务规则） -->
+    <aop:config>
+        <!-- 对com.news.biz包下的所有类的所有方法都应用事务规则 -->
+    	<aop:pointcut id="bizMethods" expression="execution(* com.news.biz.*.*(..))" /> 
+    	<!--  将事务通知和切面组合   --> 
+    	<aop:advisor advice-ref="txAdvice" pointcut-ref="bizMethods" /> 
+    </aop:config>
+  
+    <!-- 声明Hibernate事务管理器 -->
+  
+	
+	<!-- <tx:annotation-driven transaction-manager="transactionManager" /> -->
+    
+    
+  <bean id="newsinfoDAO" class="com.news.dao.impl.NewsinfoDAOImpl">
+             <property name="sessionFactory" ref="sessionFactory"></property>
+    </bean>
+    
+    <bean id="topicDAO" class="com.news.dao.impl.TopicDAOImpl">
+             <property name="sessionFactory" ref="sessionFactory" ></property>
+    </bean>
+    
+    <bean id="newsinfoBiz" class="com.news.biz.impl.NewsinfoBizImpl">
+            <property name="newsinfoDAO" ref="newsinfoDAO" ></property>
+    </bean>
+    
+    <bean id="topicBiz" class="com.news.biz.impl.TopicBizImpl">
+            <property name="topicDAO" ref="topicDAO"></property>
+    </bean>
+    <bean id="adminDAO" class="com.news.dao.impl.AdminDAOImpl" >
+            <property name="sessionFactory" ref="sessionFactory" ></property>
+    </bean>
+    
+    <bean id="adminBiz" class="com.news.biz.impl.AdminBizImpl" >
+          <property name="adminDAO" ref="adminDAO" ></property>
+    </bean>
+    
+    <bean id="newsinfoAction" class="com.news.action.NewsinfoAction" scope="prototype">
+           <property name="newsinfoBiz" ref="newsinfoBiz"></property>
+           <property name="topicBiz" ref="topicBiz"></property>
+    </bean>
+    <bean id="testAction" class="com.news.action.TestAction" scope="prototype">  
+    </bean> 
+    <bean id="adminAction" class="com.news.action.AdminAction" scope="prototype" >
+       <property name="adminBiz" ref="adminBiz" ></property>
+    </bean>
+    
+    <!-- 定义TopicDAOImpl类-->
+	<!-- <bean id="topicDAO" class="com.news.dao.impl.TopicDAOImpl">	  
+    	<property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    定义TopicBizImpl类,并为其属性topicDAO注入值
+	<bean id="topicBiz" class="com.news.biz.impl.TopicBizImpl">	  
+    	<property name="topicDAO" ref="topicDAO" />
+    </bean>
+    定义NewsinfoDAOImpl类
+    <bean id="newsinfoDAO" class="com.news.dao.impl.NewsinfoDAOImpl">	  
+    	<property name="sessionFactory" ref="sessionFactory" />
+    </bean>
+    定义NewsinfoBizImpl类,并为其属性newsinfoDAO注入值
+	<bean id="newsinfoBiz" class="com.news.biz.impl.NewsinfoBizImpl">	  
+    	<property name="newsinfoDAO" ref="newsinfoDAO" />
+    </bean>
+    定义NewinfoAction，并为其中属性topicBiz和"newsinfoBiz"注入值
+	<bean name="newsinfoAction" class="com.news.action.NewsinfoAction" scope="prototype">	  
+    	<property name="topicBiz" ref="topicBiz" />
+    	<property name="newsinfoBiz" ref="newsinfoBiz" />
+    </bean> -->
+    
+    
+</beans>

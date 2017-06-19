@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!-- Generated May 3, 2017 1:56:18 PM by Hibernate Tools 5.2.1.Final -->
+<hibernate-mapping>
+    <class name="com.news.entity.Newsinfo" table="newsinfo" catalog="news">
+        <id name="id" type="java.lang.Integer">
+            <column name="Id" />
+            <generator class="native" />
+        </id>
+        <many-to-one name="topic" class="com.news.entity.Topic" fetch="select" lazy="false">
+            <column name="Tid" />
+        </many-to-one>
+        <property name="title" type="string">
+            <column name="Title" length="100" />
+        </property>
+        <property name="author" type="string">
+            <column name="Author" length="10" />
+        </property>
+        <property name="createDate" type="timestamp">
+            <column name="CreateDate" length="19" />
+        </property>
+        <property name="content" type="string">
+            <column name="Content" length="10000" />
+        </property>
+        <property name="summary" type="string">
+            <column name="Summary" length="500" />
+        </property>
+    </class>
+</hibernate-mapping>

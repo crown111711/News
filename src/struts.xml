@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+	"-//Apache Software Foundation//DTD Struts Configuration 2.3//EN"
+	"http://struts.apache.org/dtds/struts-2.3.dtd">
+
+<struts>
+    <constant name="struts.i18n.enconding" value="utf-8"></constant>
+    <package name="default" namespace="/" extends="struts-default">
+   <!--   <action name="index" class="newsinfoAction" method="index">
+          <result name="index">/index.jsp</result>
+     </action>
+     <action name="indexsidebar" class="newsinfoAction" method="indexsidebar">
+            <result name="index_sidebar" >index-elements/index_sidebar.jsp</result>
+     </action> -->
+     
+     <action name="indexsidebar" class="newsinfoAction" method="indexsidebar">
+			<result name="index_sidebar">index-elements/index_sidebar.jsp</result>			
+	</action>	
+		<!-- 为NewsinfoAction类中的index方法配置映射 -->
+	<action name="index" class="newsinfoAction" method="index">
+	    <result name="index">/index.jsp</result>			
+    </action>	
+		
+    <action name="newsread" class="newsinfoAction" method="newsread">
+            <result name="news_read" >/news_read.jsp</result>
+    </action>	
+    
+    <action name="toNewsAdd" class="newsinfoAction" method="toNewsAdd">
+            <result name="new_add">newspages/new_add.jsp</result>
+    </action>
+    <action name="doNewsAdd" class="newsinfoAction" method="doNewsAdd" >
+           <result name="admintan" type="redirectAction" >admin</result>
+    </action>
+    
+    <action name="toNewsModify" class="newsinfoAction" method="toNewsModify">
+            <result name="news_modify" >newspages/news_modify.jsp</result>
+    </action>
+    
+    <action name="doNewsModify" class="newsinfoAction" method="doNewsModify">
+           <result name="admin" type="redirectAction">admin</result>
+    </action>
+    <action name="deleteNews" class="newsinfoAction" method="deleteNews">
+         <result name="delete" type="redirectAction">admin</result>
+    </action>
+    
+    <action name="*" class="adminAction" method="{1}">
+            <result name="index" type="redirectAction">index</result>
+    </action>	
+	<action name="admin" class="newsinfoAction" method="admin">
+	         <result name="admin">newspages/admin.jsp</result>
+	</action> 
+	
+	<action name="logout" class="adminAction" method="logout" >
+	       <result name="logout" type="redirectAction">index</result>
+	</action>
+		 <!-- <action name="test" class="testAction" >
+		  <result>/second.jsp</result>
+		 </action> -->
+    </package>
+</struts>
